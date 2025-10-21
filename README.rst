@@ -1,4 +1,4 @@
-mpc
+#mpc
 ===
 
 mpc is a command-line client for the `Music Player Daemon

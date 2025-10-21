@@ -208,7 +208,7 @@ parse_options(int * argc_p, char ** argv)
 	const struct OptionDef *opt = NULL;
 	char * tmp;
 	int cmdind = 0;
-	int optind = 0;
+	int argind = 0;  /* was: int optind = 0; — renamed to avoid NuttX optind macro */
 
 	for (i = 1; i < *argc_p; i++) {
 		const char *arg = argv[i];
@@ -221,9 +221,9 @@ parse_options(int * argc_p, char ** argv)
 
 				/* if arg is "--", there can be no more options */
 				if (len == 2) {
-					optind = i + 1;
+					argind = i + 1;
 					if (cmdind == 0) {
-						cmdind = optind;
+						cmdind = argind;
 					}
 					break;
 				}
@@ -288,14 +288,14 @@ parse_options(int * argc_p, char ** argv)
 					cmdind = i;
 				/* otherwise, it is the first command argument and we are done */
 				else {
-					optind = i;
+					argind = i;
 					break;
 				}
 			}
 		}
 	}
-	if (optind == 0)
-		optind = i;
+	if (argind == 0)
+		argind = i;
 
 	if (opt && opt->argument)
 		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
@@ -336,17 +336,17 @@ parse_options(int * argc_p, char ** argv)
 	   argv[1] to be the command, and so on. */
 	if (cmdind != 0)
 		argv[1] = argv[cmdind];
-	if (optind > 1) {
-		if ( optind == cmdind || cmdind == 0 ) {
-			for (i = optind + 1; i < *argc_p; i++)
-				argv[i-optind+2] = argv[i];
+	if (argind > 1) {
+		if ( argind == cmdind || cmdind == 0 ) {
+			for (i = argind + 1; i < *argc_p; i++)
+				argv[i-argind+2] = argv[i];
 
-			*argc_p -= optind - 1;
+			*argc_p -= argind - 1;
 		} else {
-			for (i = optind; i < *argc_p; i++)
-				argv[i-optind+2] = argv[i];
+			for (i = argind; i < *argc_p; i++)
+				argv[i-argind+2] = argv[i];
 
-			*argc_p -= optind - 2;
+			*argc_p -= argind - 2;
 		}
 	}
 }
