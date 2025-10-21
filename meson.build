@@ -1,17 +1,3 @@
-project('mpc', 'c',
-  version: '0.36',
-  meson_version: '>= 0.47',
-  default_options: [
-    'c_std=c99',
-    'warning_level=3',
-
-    # If we build libmpdclient, it should be linked statically into
-    # our executable.
-    'libmpdclient:default_library=static',
-  ],
-  license: 'GPLv2+',
-)
-
 cc = meson.get_compiler('c')
 
 conf = configuration_data()
@@ -20,17 +6,18 @@ conf.set_quoted('VERSION', meson.project_version())
 
 conf.set('HAVE_STRNDUP', cc.has_function('strndup', prefix: '#define _GNU_SOURCE\n#include <string.h>'))
 
-iconv = get_option('iconv')
-if iconv.disabled()
-  iconv = false
-elif cc.has_function('iconv')
-  iconv = true
-elif iconv.auto()
-  iconv = false
-else
-  error('iconv() not available')
-endif
-conf.set('HAVE_ICONV', iconv)
+iconv = false
+#iconv = get_option('iconv')
+#if iconv.disabled()
+#  iconv = false
+#elif cc.has_function('iconv')
+#  iconv = true
+#elif iconv.auto()
+#  iconv = false
+#else
+#  error('iconv() not available')
+#endif
+#conf.set('HAVE_ICONV', iconv)
 
 configure_file(output: 'config.h', configuration: conf)
 
@@ -117,7 +104,7 @@ executable('mpc',
   'src/options.c',
   'src/path.c',
   'src/group.c',
-  iconv_sources,
+  #iconv_sources,
   include_directories: inc,
   dependencies: [
     libmpdclient_dep,
@@ -133,15 +120,15 @@ install_data(
   'contrib/mpc-completion.bash',
   install_dir: join_paths(get_option('datadir'), 'doc', meson.project_name(), 'contrib'))
 
-if get_option('test')
-  check_dep = dependency('check')
-  subdir('test')
-endif
+#if get_option('test')
+#  check_dep = dependency('check')
+#  subdir('test')
+#endif
 
-with_documentation = get_option('documentation')
-if not with_documentation.disabled()
-  sphinx = find_program('sphinx-build', required: with_documentation)
-  if sphinx.found()
-    subdir('doc')
-  endif
-endif
+#with_documentation = get_option('documentation')
+#if not with_documentation.disabled()
+#  sphinx = find_program('sphinx-build', required: with_documentation)
+#  if sphinx.found()
+#    subdir('doc')
+#  endif
+#endif
